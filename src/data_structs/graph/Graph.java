@@ -7,14 +7,14 @@ import data_structs.hashing.HashTable;
 
 public class Graph {
 
-    private final int MAX_NODES;
+
     private final HashTable<Character, HashTable<Character, Integer>> adjacencyList;
+    private final int MAX_NODES;
 
     public Graph(int maxNodes)
     {
-        MAX_NODES = maxNodes;
+        this.MAX_NODES = maxNodes;
         adjacencyList = new HashTable<>(MAX_NODES);
-
     }
 
     public void addNode(Character key)
@@ -29,22 +29,16 @@ public class Graph {
     }
 
     public static void main(String[] args) {
-        Graph graph = new Graph(7);
+        Graph graph = new Graph(9);
         graph.addNode('A');
         graph.addNode('B');
-        graph.addNode('C');
         graph.addNode('D');
-        graph.addNode('E');
-        graph.addNode('F');
+        graph.addNode('C');
+        graph.addNode('H');
         graph.addNode('G');
         graph.addConnection('A', 'B', 5);
-        graph.addConnection('A', 'D', 8);
-        graph.addConnection('A', 'E', 4);
         graph.addConnection('B', 'C', 4);
         graph.addConnection('C', 'D', 5);
-        graph.addConnection('C', 'G', 2);
-        graph.addConnection('D', 'E', 7);
-        graph.addConnection('D', 'F', 6);
         System.out.println(graph);
     }
 
@@ -56,7 +50,7 @@ public class Graph {
         return "GRAPH = \n"+ adjString;
     }
 
-    
+    //Dijkstra's shortest path algorithm
 
 
 

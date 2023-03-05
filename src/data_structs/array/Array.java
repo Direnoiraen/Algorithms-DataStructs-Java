@@ -1,10 +1,15 @@
 package data_structs.array;
+
+import data_structs.hashing.HashedObject;
+
 import java.util.Arrays;
+import java.util.HashSet;
 
 
 public class Array <E extends Comparable<E>>{
 
-    private Object[] arr;
+
+    private final Object[] arr;
     public final int length;
 
 
@@ -19,6 +24,12 @@ public class Array <E extends Comparable<E>>{
         this.length = arr.length;
     }
 
+    public Array(Array<E> arr)
+    {
+        this.arr = arr.arr;
+        this.length = arr.length;
+    }
+
     public E get(int i)
     {
         @SuppressWarnings("unchecked")
@@ -26,14 +37,25 @@ public class Array <E extends Comparable<E>>{
         return e;
     }
 
-    public E[] getArray()
-    {
-        return (E[]) arr;
-    }
-
     public void set(int i, E data)
     {
         arr[i] = data;
+    }
+
+    public Array<E> subArray(int initialIndex, int length)
+    {
+        if(length==0) return new Array<>(0);
+        if(initialIndex<0||initialIndex+length>this.length) throw new IllegalArgumentException();
+
+        Array<E> output = new Array<>(length);
+        int index = 0;
+        for(int i = initialIndex; i<initialIndex+length; i++)
+        {
+            output.set(index, this.get(i));
+            index++;
+        }
+
+        return output;
     }
 
     @Override
@@ -44,11 +66,9 @@ public class Array <E extends Comparable<E>>{
 
     public static <T extends Comparable<T>> Array<T> mergeSort(Array<T> arr)
     {
-        Array<T> leftArr =  new Array<>((arr.length + 1) / 2);
-        System.arraycopy(arr.getArray(), 0, leftArr.getArray(), 0, leftArr.length);
+        Array<T> leftArr =  arr.subArray(0, (arr.length + 1) / 2);
 
-        Array<T> rightArr = new Array<>(arr.length - leftArr.length);
-        System.arraycopy(arr.getArray(), leftArr.length, rightArr.getArray(), 0, rightArr.length);
+        Array<T> rightArr = arr.subArray(leftArr.length, arr.length- leftArr.length);
 
         if(arr.length > 2)
         {
@@ -97,7 +117,22 @@ public class Array <E extends Comparable<E>>{
     }
 
 
+    public static void main(String[] args) {
+        Array<HashedObject<Character, Integer>> arr = new Array<>(6);
+        arr.set(0, new HashedObject<>('A', 6));
+        arr.set(1, new HashedObject<>('B', 8));
+        arr.set(2, new HashedObject<>('E', 5));
+        arr.set(3, new HashedObject<>('C', 3));
+        arr.set(4, new HashedObject<>('D', 2));
+        arr.set(5, new HashedObject<>('a', 1));
+        System.out.println(arr.subArray(0,6));
+        Array<HashedObject<Character, Integer>> larr = arr.subArray(0, (arr.length+1)/2);
+        System.out.println(larr);
+        System.out.println(arr.subArray(larr.length, arr.length - larr.length));
+        Array<HashedObject<Character, Integer>> sort = mergeSort(arr);
+        System.out.println(sort);
 
+    }
 
 
 }

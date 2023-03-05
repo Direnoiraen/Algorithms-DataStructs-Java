@@ -9,6 +9,8 @@ import com.sun.istack.internal.NotNull;
 
 import data_structs.array.Array;
 
+import java.util.Arrays;
+
 /**
  *
  * @author gavin
@@ -44,16 +46,19 @@ public class LinkedList<T extends Comparable<T>>
         this.length = list.length();
     }
 
-    
-    public Object[] asArray()
+
+    public Array<T> asArray()
     {//Converts the linked list into a an Array
-        Array<Element<T>> a = new Array<>(length());
+        Array<T> output = new Array<>(length);
         Element<T> current = front;
-        for(int i = 0; i<a.length; i++)
+
+        for(int i = 0; i<length; i++)
         {
-            a.set(i, current);
+            output.set(i, current.Value());
+            current = current.Next();
         }
-        return a.getArray();
+
+        return output;
     }
     
     public boolean isEmpty()

@@ -43,11 +43,11 @@ public class HashedObject<K extends Comparable<K>, E> implements Comparable<Hash
     @Override
     public String toString()
     {
-        return String.format("%s, %s", this.key, this.value);
+        return String.format("{%s, %s}", this.key, this.value);
     }
 
     @Override
     public int compareTo(HashedObject<K, E> o) {
-        return 0;
+        return this.getKey().compareTo(o.getKey());
     }
 }

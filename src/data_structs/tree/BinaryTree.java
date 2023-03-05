@@ -1,13 +1,8 @@
 package data_structs.tree;
 
-public class BinaryTree <T extends Comparable> {
-
+public class BinaryTree <T extends Comparable<T>> {
     Node<T> root;
-
-    public BinaryTree()
-    {
-        this.root = null;
-    }
+    public BinaryTree() { this.root = null;}
 
     public void add(T nodeValue)
     {
@@ -25,11 +20,9 @@ public class BinaryTree <T extends Comparable> {
     {
         Node<T> temp = new Node<>(nodeValue); //Creates a temporary node with the value outside the tree, so it can be compared with nodes in the tree.
 
-        if(rootNode.compareTo(temp)==0)
-        {
-            throw new IllegalArgumentException("Cannot enter the same value into the tree twice.");
-        }
-        else if(rootNode.compareTo(temp)<0)
+        if(rootNode.compareTo(temp)==0) throw new IllegalArgumentException("Cannot enter the same value into the tree twice.");
+
+        if(rootNode.compareTo(temp)<0)
         {
             if(rootNode.getRight()==null)
             {
@@ -116,7 +109,6 @@ public class BinaryTree <T extends Comparable> {
     public int count(Node<T> rootNode)
     {
         if(rootNode == null){ return 0;} //If the node equals null pop the function off of the stack and return 0;
-
         return (count(rootNode.getLeft()) + count(rootNode.getRight()) + 1); //Recursively counts each subtree and then adds one to account for the root node
 
     }

@@ -7,29 +7,27 @@ package data_structs.hashing;
 
 import data_structs.array.Array;
 
-
 /**
  *
- * @author dw
+ * @author gavin
  */
 public class HashTable<K extends Comparable<K>, E> implements IHash<K, E> {
     private final int MAX_SIZE;
-    private final Array<HashedObject<K,E>> hashArray;
+    private final Array<HashedObject<K, E>> hashArray;
+    private int size;
 
     public HashTable(int max)
     {
         this.MAX_SIZE = max;
         hashArray = new Array<>(MAX_SIZE);
-
+        size = 0;
     }
 
+    public int getSize(){ return size;}
 
-    
-
-    @SuppressWarnings("rawtypes")
-    public HashedObject[] getHashArray()
+    public Array<HashedObject<K,E>> getHashArray()
     {
-        return this.hashArray.getArray();
+        return this.hashArray;
     }
 
     public static void main(String[] args) {
@@ -43,26 +41,31 @@ public class HashTable<K extends Comparable<K>, E> implements IHash<K, E> {
 
     public String[][] asArray()
     {
-        String[][] strArray = new String[MAX_SIZE][2]; //Declare an array of strings of size MAX_SIZE
+        String[][] strArray = new String[size][2]; //Declare an array of strings of size MAX_SIZE
         int i = 0;
 
-        for(int j = 0; i<hashArray.length; i++) //Iterate through the hash array
+        Array<HashedObject<K, E>> sorted = new Array<>(size);
+
+        for(int j = 0; j<hashArray.length; j++) //Iterate through the hash array
         {
             HashedObject<K, E> current = hashArray.get(j);
 
             if(current!=null&&!current.isDeleted()) //If the current HashedObject has a value
             {
-                strArray[i][0] = current.getKey().toString();
-                strArray[i][1] = current.getValue().toString();
-
+                sorted.set(i, current);
+                i++;
             }
-            else
-            {
-                strArray[i] = null;
-            }
-            i++;
 
         }
+
+        sorted = Array.mergeSort(sorted);
+
+        for(int k = 0; k<sorted.length; k++)
+        {
+            strArray[k][0] = sorted.get(k).getKey().toString();
+            strArray[k][1] = sorted.get(k).getValue().toString();
+        }
+
 
         return strArray;
 
@@ -76,9 +79,15 @@ public class HashTable<K extends Comparable<K>, E> implements IHash<K, E> {
         int index = hashIndex(key);
         final int INITIAL_INDEX = index;
 
-        if(hashArray.get(index).getKey()==key) throw new IllegalArgumentException();
-
-        if(hashArray.get(index)==null||hashArray.get(index).isDeleted())
+        if(hashArray.get(index)==null)
+        {
+            hashArray.set(index, new HashedObject<>(key, value));
+        }
+        else if(hashArray.get(index).getKey()==key)
+        {
+            throw new IllegalArgumentException();
+        }
+        else if(hashArray.get(index).isDeleted())
         {
             hashArray.set(index, new HashedObject<>(key, value));
         }
@@ -87,11 +96,12 @@ public class HashTable<K extends Comparable<K>, E> implements IHash<K, E> {
             do {
                 index = (index + 1)%MAX_SIZE;
 
-                if((hashArray.get(index)==null)||(hashArray.get(index).isDeleted()))
+                if(hashArray.get(index)==null||hashArray.get(index).isDeleted())
                 {
                     hashArray.set(index, new HashedObject<>(key, value));
+                    break;
                 }
-                else if(hashArray.get(index).getKey()==key)
+                if(hashArray.get(index).getKey()==key)
                 {
                     throw new IllegalArgumentException();
                 }
@@ -99,14 +109,12 @@ public class HashTable<K extends Comparable<K>, E> implements IHash<K, E> {
 
             }while(index!=INITIAL_INDEX);
 
-            throw new UnsupportedOperationException();
-
-
+            if(index==INITIAL_INDEX)
+            {
+                throw new UnsupportedOperationException();
+            }
         }
-
-
-
-
+        size++;
 
     }
 
@@ -188,7 +196,6 @@ public class HashTable<K extends Comparable<K>, E> implements IHash<K, E> {
         for(int i = 0; i<hashArray.length; i++)
         {
             HashedObject<K, E> current = hashArray.get(i);
-
             if(current!=null&&!current.isDeleted())
             {
                 length++;
@@ -213,9 +220,9 @@ public class HashTable<K extends Comparable<K>, E> implements IHash<K, E> {
             String keyString = (String) key;
 
             for(int i = 0; i<keyString.length(); i++)
-             {
-                 index = index + (int)(keyString.charAt(i));
-             }
+            {
+                index = index + (int)(keyString.charAt(i));
+            }
             index = index % MAX_SIZE;
         }
         else if(key instanceof Integer)

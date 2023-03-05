@@ -1,6 +1,6 @@
 package data_structs.tree;
 
-public class Node<T extends Comparable> implements Comparable<Node>{
+public class Node<T extends Comparable<T>> implements Comparable<Node<T>>{
 
     private Node<T> left;
     private Node<T> right;
@@ -20,7 +20,7 @@ public class Node<T extends Comparable> implements Comparable<Node>{
     }
 
     @Override
-    public int compareTo(Node o) {
+    public int compareTo(Node<T> o) {
         return this.getData().compareTo(o.getData());
     }
 
