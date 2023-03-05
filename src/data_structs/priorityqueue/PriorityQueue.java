@@ -28,30 +28,16 @@ public class PriorityQueue<T extends Comparable<T>> {
         return queue.isFull();
     }
 
+    public Element<T> get(int i){ return queue.get(i);}
+
     public static void main(String[] args)
     {
 
-        PriorityQueue<Integer> pq = new PriorityQueue<>(4);
+        PriorityQueue<PriorityItem<Character, Integer>> pq = new PriorityQueue<>(4);
 
-        pq.enqueue(2);
-        System.out.println(pq);
-        pq.enqueue(1);
-        System.out.println(pq);
-        System.out.println(pq);
-        System.out.println(pq.isFull());
-        pq.dequeue();
-        System.out.println(pq.isFull());
-        System.out.println(pq);
-        pq.enqueue(3);
-        System.out.println(pq);
-        System.out.println(pq.isFull());
-        pq.enqueue(9);
-        pq.enqueue(7);
-        System.out.println(pq);
-        pq.setInverseSort(true);
-        System.out.println(pq);
-        pq.setInverseSort(false);
-        System.out.println(pq);
+        pq.enqueue(new PriorityItem<>('A', 0));
+        pq.enqueue(new PriorityItem<>('B', Integer.MAX_VALUE));
+        pq.enqueue(new PriorityItem<>('C', Integer.MAX_VALUE));
 
     }
 
@@ -66,7 +52,7 @@ public class PriorityQueue<T extends Comparable<T>> {
         else
         {
             int i = 0;
-            while((i< queue.length())&&(compare(queue.get(i), value)<0))
+            while((i< queue.length())&&(compare(queue.peek(i), value)<0))
             {
                 i++;
             }
@@ -95,7 +81,7 @@ public class PriorityQueue<T extends Comparable<T>> {
 
         for(int i = 0; i<temp.length(); i++)
         {
-            this.enqueue(temp.get(i));
+            this.enqueue(temp.peek(i));
         }
 
     }

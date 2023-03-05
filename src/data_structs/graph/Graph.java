@@ -7,7 +7,6 @@ import data_structs.hashing.HashTable;
 
 public class Graph {
 
-
     private final HashTable<Character, HashTable<Character, Integer>> adjacencyList;
     private final int MAX_NODES;
 

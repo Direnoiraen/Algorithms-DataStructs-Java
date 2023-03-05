@@ -6,17 +6,14 @@
 package data_structs.linkedlist;
 
 import com.sun.istack.internal.NotNull;
-
 import data_structs.array.Array;
-
-import java.util.Arrays;
 
 /**
  *
  * @author gavin
  */
 public class LinkedList<T extends Comparable<T>>
-{   //The front of the priority queue, e.g the 1st element
+{   //The front of the priority queue, e.g. the 1st element
     private Element<T> front;
     private int length = 0;
     public final int MAX_SIZE;
@@ -31,6 +28,7 @@ public class LinkedList<T extends Comparable<T>>
         list.insert(1, 0);
         list.insert(11, 0);
         System.out.println(list);
+        System.out.println(list.asArray());
 
     }
     public LinkedList(int maxSize)
@@ -48,7 +46,7 @@ public class LinkedList<T extends Comparable<T>>
 
 
     public Array<T> asArray()
-    {//Converts the linked list into a an Array
+    {//Converts the linked list into an Array
         Array<T> output = new Array<>(length);
         Element<T> current = front;
 
@@ -207,7 +205,25 @@ public class LinkedList<T extends Comparable<T>>
         throw new IllegalArgumentException();
     }
 
-    public T get(int index)
+    public Element<T> get(int index)
+    {
+        Element<T> current = front;
+        int currentIndex = 0;
+
+        if(isEmpty()||index>=MAX_SIZE||index<0) throw new IllegalArgumentException();
+        if(index == currentIndex) return current;
+
+        while(current.Next()!=null&&index!=currentIndex)
+        {
+            current = current.Next();
+            currentIndex++;
+        }
+
+        if(index == currentIndex) return current;
+        throw new IllegalArgumentException();
+    }
+
+    public T peek(int index)
     {
         Element<T> current = front;
         int currentIndex = 0;
