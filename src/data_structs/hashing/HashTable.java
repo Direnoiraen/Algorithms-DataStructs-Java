@@ -12,135 +12,78 @@ import data_structs.array.Array;
  * @author gavin
  */
 public class HashTable<K extends Comparable<K>, E> implements IHash<K, E> {
-    private final int MAX_SIZE;
+    public final int MAX_SIZE;
     private final Array<HashedObject<K, E>> hashArray;
-    private int size;
-
     public HashTable(int max)
     {
         this.MAX_SIZE = max;
         hashArray = new Array<>(MAX_SIZE);
-        size = 0;
     }
-
-    public int getSize(){ return size;}
-
-    public Array<HashedObject<K,E>> getHashArray()
+    public Array<HashedObject<K,E>> getHashArray() {return this.hashArray;}
+    public Array<HashedObject<K, E>> asArray()
     {
-        return this.hashArray;
-    }
-
-    public static void main(String[] args) {
-        HashTable<Integer, HashTable<Character, Integer>> hash = new HashTable<>(4);
-        hash.add(3, new HashTable<>(3));
-        hash.add(6, new HashTable<>(3));
-        hash.add(9, new HashTable<>(3));
-        hash.add(23, new HashTable<>(3));
-        System.out.println(hash);
-    }
-
-    public String[][] asArray()
-    {
-        String[][] strArray = new String[size][2]; //Declare an array of strings of size MAX_SIZE
+        Array<HashedObject<K, E>> sorted = new Array<>(length());
         int i = 0;
-
-        Array<HashedObject<K, E>> sorted = new Array<>(size);
-
-        for(int j = 0; j<hashArray.length; j++) //Iterate through the hash array
+        for(int j = 0; j<hashArray.length; j++)
         {
             HashedObject<K, E> current = hashArray.get(j);
-
             if(current!=null&&!current.isDeleted()) //If the current HashedObject has a value
             {
                 sorted.set(i, current);
                 i++;
             }
-
         }
-
         sorted = Array.mergeSort(sorted);
-
+        return sorted;
+    }
+    public String[][] asStrArray()
+    {
+        String[][] strArray = new String[length()][2]; //Declare an array of strings of size MAX_SIZE
+        Array<HashedObject<K, E>> sorted = this.asArray();
         for(int k = 0; k<sorted.length; k++)
         {
-            strArray[k][0] = sorted.get(k).getKey().toString();
-            strArray[k][1] = sorted.get(k).getValue().toString();
+            if(sorted.get(k).getKey()!=null) strArray[k][0] = sorted.get(k).getKey().toString();
+            if(sorted.get(k).getValue()!=null) strArray[k][1] = sorted.get(k).getValue().toString();
         }
-
-
         return strArray;
-
     }
-
-
-
+    public void replace(K key, E newValue)
+    {
+        if(this.contains(key)) this.delete(key);
+        this.add(key, newValue);
+    }
     @Override
     public void add(K key, E value) {
-
         int index = hashIndex(key);
         final int INITIAL_INDEX = index;
-
-        if(hashArray.get(index)==null)
-        {
-            hashArray.set(index, new HashedObject<>(key, value));
-        }
-        else if(hashArray.get(index).getKey()==key)
-        {
-            throw new IllegalArgumentException();
-        }
-        else if(hashArray.get(index).isDeleted())
-        {
-            hashArray.set(index, new HashedObject<>(key, value));
-        }
+        if(hashArray.get(index)==null) hashArray.set(index, new HashedObject<>(key, value));
+        else if(hashArray.get(index).isDeleted()) hashArray.set(index, new HashedObject<>(key, value));
+        else if(hashArray.get(index).getKey()==key) throw new IllegalArgumentException();
         else
         {
             do {
                 index = (index + 1)%MAX_SIZE;
-
                 if(hashArray.get(index)==null||hashArray.get(index).isDeleted())
                 {
                     hashArray.set(index, new HashedObject<>(key, value));
                     break;
                 }
-                if(hashArray.get(index).getKey()==key)
-                {
-                    throw new IllegalArgumentException();
-                }
-
-
+                if(hashArray.get(index).getKey()==key) throw new IllegalArgumentException();
             }while(index!=INITIAL_INDEX);
-
-            if(index==INITIAL_INDEX)
-            {
-                throw new UnsupportedOperationException();
-            }
+            if(index==INITIAL_INDEX) throw new UnsupportedOperationException();
         }
-        size++;
-
     }
-
     @Override
     public E item(K key) {
         int index = hashIndex(key);
         final int INITIAL_INDEX = index;
-
         do {
-            if(hashArray.get(index)==null)
-            {
-                throw new IllegalArgumentException();
-            }
-            if(hashArray.get(index).getKey()!=key)
-            {
-                index = (index+1)%MAX_SIZE;
-            }
-            else
-            {
-                return hashArray.get(index).getValue();
-            }
+            if(hashArray.get(index)==null) throw new IllegalArgumentException();
+            if(hashArray.get(index).getKey()!=key) index = (index+1)%MAX_SIZE;
+            else return hashArray.get(index).getValue();
         }while(index!=INITIAL_INDEX);
-
         throw new IllegalArgumentException();
     }
-
     @Override
     public void delete(K key) {
         int index = hashIndex(key);
@@ -169,11 +112,8 @@ public class HashTable<K extends Comparable<K>, E> implements IHash<K, E> {
 
     @Override
     public boolean contains(K key) {
-
         int index = hashIndex(key);
         boolean isContained = false;
-
-
         for(int i = 0; i<MAX_SIZE; i++)
         {
             if(hashArray.get(index)!=null&&hashArray.get(index).getKey()==key)
@@ -183,42 +123,26 @@ public class HashTable<K extends Comparable<K>, E> implements IHash<K, E> {
             }
             index = (index+1)%MAX_SIZE;
         }
-
         return isContained;
     }
-
-
-
     @Override
     public int length() {
         int length = 0;
-
         for(int i = 0; i<hashArray.length; i++)
         {
             HashedObject<K, E> current = hashArray.get(i);
-            if(current!=null&&!current.isDeleted())
-            {
-                length++;
-            }
+            if(current!=null&&!current.isDeleted()) length++;
         }
-
         return length;
     }
-
     @Override
-    public boolean isEmpty() {
-        return length()==0;
-    }
-
+    public boolean isEmpty(){ return length()==0;}
     private int hashIndex(K key)
     {
         int index = 0;
-
         if(key instanceof String)
         {
-
             String keyString = (String) key;
-
             for(int i = 0; i<keyString.length(); i++)
             {
                 index = index + (int)(keyString.charAt(i));
@@ -235,37 +159,22 @@ public class HashTable<K extends Comparable<K>, E> implements IHash<K, E> {
             char charKey = (Character) key;
             index = ((int) charKey) % MAX_SIZE;
         }
-        else
-        {
-            throw new IllegalArgumentException("Hash Table can only handle keys of type: String, Integer, Character.");
-        }
-
+        else throw new IllegalArgumentException("Hash Table can only handle keys of type: String, Integer, Character.");
         return index;
-
     }
-
     @Override
     public String toString()
     {
-        String[][] strArray = this.asArray();
+        String[][] strArray = this.asStrArray();
         String output = "{";
-
         for(String[] current:strArray)
         {
             if(current!=null)
             {
                 output = String.format("%s '%s':%s, ", output, current[0], current[1]);
-                if(current[1].contains("{"))
-                {
-                    output = output + "\n";
-                }
+                if((current[1]!=null)&&(current[1].contains("{"))) output = output + "\n";
             }
-
         }
-
-
-
         return output + "}";
     }
-
 }

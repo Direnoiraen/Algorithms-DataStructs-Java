@@ -1,46 +1,25 @@
 package data_structs.graph;
-
-import data_structs.array.Array;
-import data_structs.priorityqueue.*;
 import data_structs.hashing.HashTable;
-
-
 public class Graph {
-
     private final HashTable<Character, HashTable<Character, Integer>> adjacencyList;
     private final int MAX_NODES;
-
     public Graph(int maxNodes)
     {
         this.MAX_NODES = maxNodes;
         adjacencyList = new HashTable<>(MAX_NODES);
     }
-
-    public void addNode(Character key)
-    {
-        adjacencyList.add(key, new HashTable<>(MAX_NODES));
-    }
-
+    public void addNodes(Character ... keys) { for(Character current: keys) adjacencyList.add(current, new HashTable<>(MAX_NODES));}
     public void addConnection(Character startNode, Character endNode, Integer weight)
     {
         adjacencyList.item(startNode).add(endNode, weight);
         adjacencyList.item(endNode).add(startNode, weight);
     }
-
-    public static void main(String[] args) {
-        Graph graph = new Graph(9);
-        graph.addNode('A');
-        graph.addNode('B');
-        graph.addNode('D');
-        graph.addNode('C');
-        graph.addNode('H');
-        graph.addNode('G');
-        graph.addConnection('A', 'B', 5);
-        graph.addConnection('B', 'C', 4);
-        graph.addConnection('C', 'D', 5);
-        System.out.println(graph);
+    public void addConnections(Character startNode, Character[] endNodes, Integer[] weights)
+    {
+        if(endNodes.length!=weights.length) throw new IllegalArgumentException("Number of end nodes must equal number of weights");
+        for(int i = 0; i<endNodes.length; i++) this.addConnection(startNode, endNodes[i], weights[i]);
     }
-
+    public HashTable<Character, HashTable<Character, Integer>> getAdjacencyList(){ return adjacencyList;}
     @Override
     public String toString()
     {
@@ -48,9 +27,8 @@ public class Graph {
 
         return "GRAPH = \n"+ adjString;
     }
-
-    //Dijkstra's shortest path algorithm
-
-
-
+    public Integer edgeWeight(Character startNode, Character endNode)
+    {
+        return adjacencyList.item(startNode).item(endNode);
+    }
 }

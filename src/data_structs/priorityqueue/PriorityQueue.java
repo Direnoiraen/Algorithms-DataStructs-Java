@@ -1,24 +1,19 @@
 package data_structs.priorityqueue;
 
 import data_structs.linkedlist.*;
-
+import data_structs.array.Array;
 /**
  *
  * @author gavin
  */
-
 public class PriorityQueue<T extends Comparable<T>> {
-
     public LinkedList<T> queue;
-
     //Default is from low to high, inverse sort is from high to low
     private boolean inverseSort = false;
-
     public PriorityQueue(int maxSize)
     {
         queue = new LinkedList<>(maxSize);
     }
-
     public boolean isEmpty()
     {
         return queue.isEmpty();
@@ -27,75 +22,57 @@ public class PriorityQueue<T extends Comparable<T>> {
     {
         return queue.isFull();
     }
-
     public Element<T> get(int i){ return queue.get(i);}
-
-    public static void main(String[] args)
-    {
-
-        PriorityQueue<PriorityItem<Character, Integer>> pq = new PriorityQueue<>(4);
-
-        pq.enqueue(new PriorityItem<>('A', 0));
-        pq.enqueue(new PriorityItem<>('B', Integer.MAX_VALUE));
-        pq.enqueue(new PriorityItem<>('C', Integer.MAX_VALUE));
-
-    }
-
     public void enqueue(T value)
     {
         if(isFull()) throw new UnsupportedOperationException("Cannot add to a full queue.");
-
-        if(isEmpty())
-        {
-            queue.append(value);
-        }
+        if(isEmpty()) queue.append(value);
         else
         {
             int i = 0;
-            while((i< queue.length())&&(compare(queue.peek(i), value)<0))
-            {
-                i++;
-            }
+            while((i< queue.length())&&(compare(queue.peek(i), value)<0)) i++;
             queue.insert(value, i);
         }
     }
 
-    public void dequeue()
-    {
-        queue.pop();
-    }
+    public T dequeue() { return queue.pop();}
 
     @Override
-    public String toString()
-    {
-        return queue.toString();
-    }
-
+    public String toString() {return queue.toString();}
     public boolean isInverseSort() { return inverseSort;}
-
     public void setInverseSort(boolean mode)
     {
         inverseSort = mode;
+        this.update();
+    }
+    public void update(){
         LinkedList<T> temp = new LinkedList<>(queue);
         queue = new LinkedList<>(temp.MAX_SIZE);
-
-        for(int i = 0; i<temp.length(); i++)
-        {
-            this.enqueue(temp.peek(i));
-        }
-
+        for(int i = 0; i<temp.length(); i++) this.enqueue(temp.peek(i));
     }
-
     private int compare(T itemA, T itemB)
     {
-        if(inverseSort)
+        if(inverseSort) return itemB.compareTo(itemA);
+        else return itemA.compareTo(itemB);
+    }
+    public int getIndex(T item)
+    {
+        Array<T> arr = queue.asArray();
+        if(item instanceof PriorityItem)
         {
-            return itemB.compareTo(itemA);
+            for(int i = 0; i<arr.length; i++)
+            {
+                if(((PriorityItem<?, ?>) arr.get(i)).getValue() == ((PriorityItem<?, ?>) item).getValue()){ return i;}
+            }
         }
         else
         {
-            return itemA.compareTo(itemB);
+            for(int i = 0; i<arr.length; i++)
+            {
+                if(arr.get(i) == item){ return i;}
+            }
         }
+        throw new IllegalArgumentException("Item not found in priority queue.");
     }
 
 }

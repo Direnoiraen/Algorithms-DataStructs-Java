@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 
 
-public class Array <E extends Comparable<E>>{
+public class Array <E extends Comparable<E>> {
 
 
     private final Object[] arr;
@@ -116,6 +116,21 @@ public class Array <E extends Comparable<E>>{
 
     }
 
+    @Override
+    public boolean equals(Object o)
+    {
+        if(!(o instanceof Array)) return false;
+        else if (((Array<?>) o).length!=this.length) return false;
+        else
+        {
+            for(int i = 0; i<this.length; i++)
+            {
+                if(this.get(i)!=((Array<?>) o).get(i)) return false;
+            }
+        }
+        return true;
+    }
+
 
     public static void main(String[] args) {
         Array<HashedObject<Character, Integer>> arr = new Array<>(6);
@@ -131,7 +146,7 @@ public class Array <E extends Comparable<E>>{
         System.out.println(arr.subArray(larr.length, arr.length - larr.length));
         Array<HashedObject<Character, Integer>> sort = mergeSort(arr);
         System.out.println(sort);
-
+        System.out.println(larr.equals(arr));
     }
 
 

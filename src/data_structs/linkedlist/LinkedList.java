@@ -1,96 +1,55 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package data_structs.linkedlist;
-
 import com.sun.istack.internal.NotNull;
 import data_structs.array.Array;
-
 /**
  *
  * @author gavin
  */
 public class LinkedList<T extends Comparable<T>>
-{   //The front of the priority queue, e.g. the 1st element
+{
     private Element<T> front;
     private int length = 0;
     public final int MAX_SIZE;
-
-
-    public static void main(String[] args) {
-        LinkedList<Integer> list = new LinkedList<>();
-
-        list.append(5);
-        list.insert(7, 1);
-        list.insert(8, 2);
-        list.insert(1, 0);
-        list.insert(11, 0);
-        System.out.println(list);
-        System.out.println(list.asArray());
-
-    }
     public LinkedList(int maxSize)
     {
         this.MAX_SIZE = maxSize;
     }
     public LinkedList() { this.MAX_SIZE = Integer.MAX_VALUE;}
-
     public LinkedList(@NotNull LinkedList<T> list)
     {
         this.MAX_SIZE = list.MAX_SIZE;
         this.front = list.getFront();
         this.length = list.length();
     }
-
-
     public Array<T> asArray()
     {//Converts the linked list into an Array
         Array<T> output = new Array<>(length);
         Element<T> current = front;
-
         for(int i = 0; i<length; i++)
         {
             output.set(i, current.Value());
             current = current.Next();
         }
-
         return output;
     }
-    
     public boolean isEmpty()
     {//Return if the queue is empty
         return length == 0;
     }
-
     public boolean isFull() { return length == MAX_SIZE;}
-
     public void append(T value)
     {//Append to the end of the list 
-        Element<T> current;
+        Element<T> current = front;
         Element<T> tail;
-        
         if (front != null)
-        {       
-            current = front;// Start at the front of the LinkedList
-            
-            while (current.Next() != null)
-            {//Iterate through elements in the LinkedList
-                current = current.Next();             
-            }
-            
+        {
+            while (current.Next() != null) current = current.Next();
             tail = new Element<>(value, current, null);// Create new tail Element pointing back to the previous Tail
             current.Next(tail);//Update the end of the LinkedList to point to this new Element
         }
-        else
-        {//Add the front of the linked list
-            front = new Element<>(value, null, null);
-        }
+        else front = new Element<>(value, null, null);
         length++;
-
     }
-    
     public T remove(T value)
     {//Remove the first element that has a matching value, and reorganise the queue      
      //Throw an error if the value is not present
@@ -115,9 +74,13 @@ public class LinkedList<T extends Comparable<T>>
     public T pop()
     {//Remove the 1st element from the queue and reorganise the queue
      //Throw an error if the queue is empty
-
         Element<T> removed;
-
+        if(length() == 1)
+        {
+            removed = front;
+            front = null;
+            return removed.Value();
+        }
         if(!isEmpty())
         {
             removed = front;
@@ -126,8 +89,6 @@ public class LinkedList<T extends Comparable<T>>
             length--;
             return removed.Value();
         }
-
-
          throw new UnsupportedOperationException();
     }
     
@@ -148,7 +109,6 @@ public class LinkedList<T extends Comparable<T>>
             length--;
             return current.Value();
         }
-
         throw new IndexOutOfBoundsException();  
     }
     
@@ -190,7 +150,6 @@ public class LinkedList<T extends Comparable<T>>
      //Throw an error if the value does not exist 
         Element<T> current = front;
         int index = 0;
-
         if(!isEmpty())
         {
             while(current.Next()!=null&&!current.Value().equals(value))
@@ -198,9 +157,7 @@ public class LinkedList<T extends Comparable<T>>
                 current = current.Next();
                 index++;
             }
-            if(current.Value().equals(value)) {
-                return index;
-            }
+            if(current.Value().equals(value)) return index;
         }
         throw new IllegalArgumentException();
     }
@@ -209,16 +166,13 @@ public class LinkedList<T extends Comparable<T>>
     {
         Element<T> current = front;
         int currentIndex = 0;
-
         if(isEmpty()||index>=MAX_SIZE||index<0) throw new IllegalArgumentException();
         if(index == currentIndex) return current;
-
         while(current.Next()!=null&&index!=currentIndex)
         {
             current = current.Next();
             currentIndex++;
         }
-
         if(index == currentIndex) return current;
         throw new IllegalArgumentException();
     }
@@ -227,63 +181,45 @@ public class LinkedList<T extends Comparable<T>>
     {
         Element<T> current = front;
         int currentIndex = 0;
-
         if(isEmpty()||index>=MAX_SIZE||index<0) throw new IllegalArgumentException();
         if(index == currentIndex) return current.Value();
-
         while(current.Next()!=null&&index!=currentIndex)
         {
             current = current.Next();
             currentIndex++;
         }
-
         if(index == currentIndex) return current.Value();
         throw new IllegalArgumentException();
     }
-
     public int length()
     {//Return the number of elements in the Linked List
         return length;
     }
-
     public boolean search(T value)
     {//Return true if the value exists in the Linked List
         Element<T> current = front;
-
         if(!isEmpty())
         {
             for(int i = 0; i< length; i++)
             {
-                if(current.Value().equals(value))
-                {
-                    return true;
-                }
+                if(current.Value().equals(value)) return true;
                 current = current.Next();
             }
         }
         return false;
-
     }
-
     @Override
     public String toString() {
-
         String output = "";
-
         if(front == null) return output;
-
         Element<T> current = front;
-
         while(current.Next()!=null)
         {
             output = String.format("%s%s ", output, current);
             current = current.Next();
         }
-
-        return output + current.toString() + " ";
-
+        return output + current + " ";
     }
-
     public Element<T> getFront() {
         return front;
     }
